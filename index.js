@@ -8,9 +8,9 @@ const  { MongoClient,ObjectId } = require('mongodb');
 // app.use(cors());
 // app.use(express.json());
 const app = express();
-const PORT = 5000;
-  app.listen(PORT, () => {
-  console.log(`Server is running on ${PORT}`);
+const PORTS = process.env.PORT || 5000;
+  app.listen(PORTS, () => {
+  console.log(`Server is running on ${PORTS}`);
 });
 const client = new MongoClient(`${process.env.URI}`);
  async function connectToMongoDB() {
@@ -22,6 +22,10 @@ const client = new MongoClient(`${process.env.URI}`);
         console.dir(err);
     }
 }
+const db = client.db("Event-Manager"); 
+const eventCollection = db.collection("events")
+
+
 app.get('/', (req, res) => {
   res.send('Hello World');
 })
