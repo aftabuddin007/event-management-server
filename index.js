@@ -29,16 +29,25 @@ const eventCollection = db.collection("events")
 app.get('/', (req, res) => {
   res.send('Hello World');
 })
-
+// add event
 app.post("/addEvent", async (req, res) => {
   const event = req.body;
   const result = await eventCollection.insertOne(event);
   res.send(result);
 })
+// all events
 app.get("/events", async (req, res) => {
   const result = await eventCollection.find({}).toArray();
   res.send(result);
 } )
+// single event
+app.get("/event/:id", async (req, res) => {
+  const id = req.params.id;
+  const query = { _id: new ObjectId(id) };
+  const result = await eventCollection.findOne(query);
+  res.send(result);
+})
+
 
 
 connectToMongoDB()
