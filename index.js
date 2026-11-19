@@ -37,11 +37,11 @@ app.post("/addEvent", async (req, res) => {
 })
 // all events
 app.get("/events", async (req, res) => {
-  const result = await eventCollection.find({}).toArray();
+  const result = await eventCollection.find().toArray();
   res.send(result);
-} )
+})
 // single event
-app.get("/event/:id", async (req, res) => {
+app.get("/events/:id", async (req, res) => {
   const id = req.params.id;
   const query = { _id: new ObjectId(id) };
   const result = await eventCollection.findOne(query);
