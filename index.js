@@ -24,6 +24,7 @@ const client = new MongoClient(`${process.env.URI}`);
 }
 const db = client.db("Event-Manager"); 
 const eventCollection = db.collection("events")
+const userCollection = db.collection("users")
 
 
 app.get('/', (req, res) => {
@@ -47,6 +48,37 @@ app.get("/events/:id", async (req, res) => {
   const result = await eventCollection.findOne(query);
   res.send(result);
 })
+// put event\
+app.put("/events/:id", async (req, res) => {
+  const id = req.params.id;
+  const updatedEvent = req.body;
+  const filter = { _id: new ObjectId(id) };
+  const options = { upsert: true };
+  const updateDoc = {
+    $set: {
+      name: updatedEvent.name,
+      date: updatedEvent.date,
+      location: updatedEvent.location,
+      description: updatedEvent.description,
+    },
+  };
+  const result = await eventCollection.updateOne(filter, updateDoc, options);
+  res.send(result);
+})
+// delete event
+app.delete("/events/:id", async (req, res) => {
+  const id = req.params.id;
+  const query = { _id: new ObjectId(id) };
+  const result = await eventCollection.deleteOne(query);
+  res.send(result);
+})
+// user
+app.post("/addUser", async (req, res) => {
+  const user = req.body;
+  const result = await userCollection.insertOne(user);
+  res.send(result);
+})
+
 
 
 
