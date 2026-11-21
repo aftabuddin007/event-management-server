@@ -50,21 +50,44 @@ app.get("/events/:id", async (req, res) => {
 })
 // put event\
 app.put("/events/:id", async (req, res) => {
-  const id = req.params.id;
-  const updatedEvent = req.body;
-  const filter = { _id: new ObjectId(id) };
-  const options = { upsert: true };
-  const updateDoc = {
-    $set: {
-      name: updatedEvent.name,
-      date: updatedEvent.date,
-      location: updatedEvent.location,
-      description: updatedEvent.description,
-    },
-  };
-  const result = await eventCollection.updateOne(filter, updateDoc, options);
-  res.send(result);
-})
+  try {
+    const id = req.params.id;
+    const updatedEvent = req.body;
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).send({ message: "Invalid event ID" });
+    }
+
+    const filter = { _id: new ObjectId(id) };
+
+    const updateDoc = {
+      $set: {
+        eventName: updatedEvent.eventName,
+        category: updatedEvent.category,
+        organizer: updatedEvent.organizer,
+        location: updatedEvent.location,
+        venue: updatedEvent.venue,
+        ticketPrice: Number(updatedEvent.ticketPrice),
+        totalSeats: Number(updatedEvent.totalSeats),
+        eventDate: updatedEvent.eventDate,
+        startTime: updatedEvent.startTime,
+        endTime: updatedEvent.endTime,
+        imageUrl: updatedEvent.imageUrl,
+        description: updatedEvent.description,
+      },
+    };
+
+    const result = await eventCollection.updateOne(
+      filter,
+      updateDoc
+    );
+
+    res.send(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Failed to update event" });
+  }
+});
 // delete event
 app.delete("/events/:id", async (req, res) => {
   const id = req.params.id;
